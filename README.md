@@ -155,6 +155,36 @@ XGBClassifier(
 
 ---
 
+## 🖼️ Figures
+
+This project generates several figures to visualize the data and model performance.
+
+### EDA Figures
+
+-   `eda_corr_heatmap.png`: A heatmap showing the correlation between different features in the dataset.
+-   `eda_histograms.png`: Histograms for each feature to visualize their distribution.
+-   `eda_target.png`: A bar chart showing the distribution of the target variable (Dropout, Enrolled, Graduate).
+
+### Model Evaluation Figures
+
+-   `rf_confusion_norm.png` / `xgb_confusion_norm.png`: Normalized confusion matrices for the Random Forest and XGBoost models. These show the percentage of correct and incorrect predictions for each class.
+-   `rf_confusion_raw.png` / `xgb_confusion_raw.png`: Raw confusion matrices with the count of predictions.
+-   `rf_feature_importance.png` / `xgb_feature_importance_gain.png`: Feature importance plots for both models, showing which features have the most impact on the predictions.
+
+### SHAP (SHapley Additive exPlanations) Figures
+
+These plots explain the output of the machine learning models.
+
+-   `random forest_shap_summary.png` / `xgboost_shap_summary.png`: SHAP summary plots. They combine feature importance with feature effects. Each point on the summary plot is a Shapley value for a feature and an instance. The position on the y-axis is determined by the feature and on the x-axis by the Shapley value.
+-   `random forest_shap_dependence_{feature}.png` / `xgboost_shap_dependence_{feature}.png`: These plots show the effect of a single feature on the SHAP value of that feature. They are useful for understanding the relationship between a feature and the model's output. The plots are generated for the following features:
+    -   `Age at enrollment`
+    -   `average_grade`
+    -   `overall_approval_rate`
+    -   `total_approved_units`
+    -   `Tuition fees up to date`
+
+---
+
 ## ⚙️ Next Steps
 
 ### 5️⃣ `05_interpretation_shap.ipynb`
