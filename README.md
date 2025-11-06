@@ -248,3 +248,95 @@ Artifacts are automatically saved under:
 - End-to-end reproducible ML pipeline ✅
 
 > **Next:** optional hyperparameter tuning or dashboard deployment for stakeholder presentation.
+
+# Ensemble_metrics.json explained
+
+Perfect — this is exactly the kind of evaluation we want to interpret now that your **ensemble (RF + XGB)** is running.
+
+Let’s unpack it clearly:
+
+---
+
+## 🧩 1. Overall picture
+
+| Metric          | Ensemble Result | What It Means                                                 |
+| :-------------- | :-------------- | :------------------------------------------------------------ |
+| **Accuracy**    | **0.749**       | About **75%** of all predictions match the true class.        |
+| **Macro F1**    | **0.676**       | Average F1 across the three classes (treats all equally).     |
+| **Weighted F1** | **0.742**       | Weighted by class size — dominated by large “Enrolled” class. |
+| **Micro F1**    | **0.749**       | Equivalent to overall accuracy for multi-class tasks.         |
+
+So overall, your ensemble slightly outperforms your **XGBoost** (0.740 acc, 0.67 F1) and is roughly on par or a hair below your **Random Forest** baseline (0.746 acc, 0.69 F1) — but we need to look **per class** to see _why_.
+
+---
+
+## 🎓 2. Per-class results
+
+| Class        | Precision | Recall |       F1 | Interpretation                                                          |
+| :----------- | --------: | -----: | -------: | :---------------------------------------------------------------------- |
+| **Dropout**  |      0.77 |   0.73 | **0.75** | Strong — your model detects dropouts quite well.                        |
+| **Graduate** |      0.47 |   0.39 | **0.43** | Still the hardest — some improvement over XGB (≈0.41), but not much.    |
+| **Enrolled** |      0.81 |   0.89 | **0.85** | Excellent — your model is very good at recognizing continuing students. |
+
+### 💡 Summary
+
+- The **Dropout** class remains solid.
+- **Graduate** (the minority class) still lags — both **recall** and **precision** are low, meaning the model confuses graduates with the other two outcomes.
+- **Enrolled** dominates and performs strongly, slightly inflating overall metrics due to its size.
+
+---
+
+## 📈 3. Macro vs. Weighted F1
+
+- **Macro F1 (0.676):** Treats each class equally. Penalized by poor Graduate performance.
+- **Weighted F1 (0.742):** Higher because Enrolled (large, easy class) performs well and dominates.
+
+→ The gap between them (**0.742 vs. 0.676**) indicates class imbalance still matters — the model’s success is uneven across classes.
+
+---
+
+## ⚖️ 4. How the Ensemble Affects Each Class
+
+Compared to your individual models:
+
+| Class    | RF F1 | XGB F1 | Ensemble F1 | Trend                           |
+| :------- | ----: | -----: | ----------: | :------------------------------ |
+| Dropout  |  0.75 |   0.73 |    **0.75** | Same or slightly better         |
+| Graduate |  0.48 |   0.41 |    **0.43** | Slightly below RF but above XGB |
+| Enrolled |  0.85 |   0.85 |    **0.85** | Essentially unchanged           |
+
+**Interpretation:**
+The ensemble combined RF’s stronger handling of Dropout/Graduate with XGB’s stronger Enrolled predictions. It stabilized generalization (accuracy slightly higher than XGB), but didn’t solve the Graduate-class weakness.
+
+---
+
+## 🧠 5. What It Tells You Practically
+
+1. **Ensembling helps stability** — similar accuracy to RF but with slightly smoother precision/recall trade-offs.
+2. **The "Graduate" class remains underrepresented** — recall below 0.40 suggests the model still misses many graduates.
+3. **Next improvements** should target that class specifically:
+
+   - Use **class-weight tuning** for Graduate.
+   - Try **oversampling** or **SMOTE** for Graduate only.
+   - Engineer features capturing _completion indicators_ (e.g. “credits completed” or “final-year performance”).
+
+4. **Interpretation goal reached** — you’ve achieved a consistent, balanced model that’s explainable, with next steps clearly defined.
+
+---
+
+## 🧾 TL;DR
+
+| Metric                  | Meaning                                                      |
+| :---------------------- | :----------------------------------------------------------- |
+| **Accuracy (0.749)**    | Predicts ~3/4 of outcomes correctly.                         |
+| **Macro F1 (0.676)**    | Average performance across classes — Graduate is still weak. |
+| **Weighted F1 (0.742)** | Reflects good performance on the majority class.             |
+| **Graduate F1 (0.43)**  | Main area for improvement.                                   |
+
+**In words:**
+
+> The ensemble achieves solid overall performance and strong dropout/enrolled detection, but struggles to accurately classify graduates — the most difficult and underrepresented group. Future work should rebalance or add graduate-specific features rather than rely on model blending alone.
+
+---
+
+Would you like me to summarize this in a short paragraph suitable for including in your _report section_ (“Method and Analysis”)?

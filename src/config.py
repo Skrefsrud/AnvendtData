@@ -19,10 +19,13 @@ COLS = {
     "U2_APPROVED": "Curricular units 2nd sem (approved)",
     "U1_ENROLLED": "Curricular units 1st sem (enrolled)",
     "U2_ENROLLED": "Curricular units 2nd sem (enrolled)",
+    # Added: "without evaluations" columns for failure ratios
+    "U1_WO_EVAL": "Curricular units 1st sem (without evaluations)",
+    "U2_WO_EVAL": "Curricular units 2nd sem (without evaluations)",
     "UNEMP": "Unemployment rate",
     "INFL": "Inflation rate",
     "GDP": "GDP",
-    # optional keepers
+    # optional keepers (alias)
     "MARITAL_STATUS": "Marital status",
 }
 
@@ -32,9 +35,17 @@ ENG = {
     "TOTAL_APPROVED": "total_approved_units",
     "TOTAL_ENROLLED": "total_enrolled_units",
     "APPROVAL_RATE": "overall_approval_rate",
+
+    # New engineered features
+    "GRADE_CHANGE": "grade_change",
+    "FAIL_RATIO_1ST": "fail_ratio_1st",
+    "FAIL_RATIO_2ND": "fail_ratio_2nd",
+    "ENGAGEMENT_INDEX": "engagement_index",
+    "FINANCIAL_PRESSURE": "financial_pressure",
 }
 
 # Feature sets
+# Keep your current features and append the new engineered ones
 SELECTED_FEATURES = [
     ENG["AVG_GRADE"],
     ENG["TOTAL_APPROVED"],
@@ -49,4 +60,11 @@ SELECTED_FEATURES = [
     COLS["INFL"],
     COLS["GDP"],
     COLS["INTL"],
+
+    # New engineered features to include in modeling
+    ENG["GRADE_CHANGE"],
+    ENG["FAIL_RATIO_1ST"],
+    ENG["FAIL_RATIO_2ND"],
+    ENG["ENGAGEMENT_INDEX"],
+    ENG["FINANCIAL_PRESSURE"],
 ]
